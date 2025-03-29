@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5001:5000"  # 호스트의 5001 포트를 컨테이너의 5000 포트에 매핑
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/parking_management
+    restart: unless-stopped
+    depends_on:
+      - postgres
+  
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=parking_management
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
