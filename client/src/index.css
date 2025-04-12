@@ -11,3 +11,16 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* 크롬에서 스크롤 작동을 위한 커스텀 스타일 */
+.scrollable-content {
+  max-height: 65vh;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scrollable-dialog {
+  max-height: 80vh;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}

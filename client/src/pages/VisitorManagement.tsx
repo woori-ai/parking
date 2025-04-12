@@ -234,7 +234,7 @@ const VisitorManagement = () => {
               {showAllReservations ? (
                 // 전체 예약 보기
                 reservations && reservations.length > 0 ? (
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto scrollable-content">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -304,7 +304,7 @@ const VisitorManagement = () => {
               ) : (
                 // 선택된 날짜 예약 보기
                 dateReservations && dateReservations.length > 0 ? (
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto scrollable-content">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -386,7 +386,7 @@ const VisitorManagement = () => {
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[525px]">
+        <DialogContent className="sm:max-w-[525px] scrollable-dialog">
           <DialogHeader>
             <DialogTitle>
               {formMode === 'create' ? '방문 차량 예약 추가' : '방문 차량 예약 수정'}

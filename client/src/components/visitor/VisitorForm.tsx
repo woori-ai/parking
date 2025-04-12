@@ -135,12 +135,12 @@ const VisitorForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pb-6">
         <FormField
           control={form.control}
           name="carNumber"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="mb-2">
               <FormLabel>차량 번호</FormLabel>
               <FormControl>
                 <Input placeholder="예: 12가3456" {...field} disabled={isLoading} />
@@ -154,7 +154,7 @@ const VisitorForm = ({
           control={form.control}
           name="visitPurpose"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="mb-2">
               <FormLabel>방문 목적</FormLabel>
               <FormControl>
                 <Input placeholder="방문 목적 입력 (회의, 배송 등)" {...field} disabled={isLoading} />
@@ -168,7 +168,7 @@ const VisitorForm = ({
           control={form.control}
           name="visitDate"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
+            <FormItem className="flex flex-col mb-2">
               <FormLabel>방문 날짜</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
@@ -301,7 +301,7 @@ const VisitorForm = ({
           </>
         )}
 
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end space-x-2 mt-6 pb-4">
           <Button 
             type="button" 
             variant="outline" 

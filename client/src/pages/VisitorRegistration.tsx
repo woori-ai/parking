@@ -206,7 +206,7 @@ const VisitorRegistration = () => {
               {showAllReservations ? (
                 // All reservations view (similar to admin page)
                 allReservations && allReservations.length > 0 ? (
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto overflow-y-auto max-h-[60vh]">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -299,7 +299,7 @@ const VisitorRegistration = () => {
                           선택한 날짜에 예약된 방문 차량이 없습니다.
                         </div>
                       ) : (
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto overflow-y-auto max-h-[40vh]">
                           <Table>
                             <TableHeader>
                               <TableRow>
@@ -353,19 +353,21 @@ const VisitorRegistration = () => {
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[525px]">
+        <DialogContent className="sm:max-w-[525px] max-h-[70vh] overflow-y-scroll">
           <DialogHeader>
             <DialogTitle>
               {formMode === 'create' ? '방문 차량 예약 추가' : '방문 차량 예약 수정'}
             </DialogTitle>
           </DialogHeader>
-          <VisitorForm 
-            mode={formMode}
-            initialData={editingReservation}
-            onSuccess={handleFormSuccess}
-            onCancel={() => setIsDialogOpen(false)}
-            defaultDate={selectedDate}
-          />
+          <div className="overflow-y-auto">
+            <VisitorForm 
+              mode={formMode}
+              initialData={editingReservation}
+              onSuccess={handleFormSuccess}
+              onCancel={() => setIsDialogOpen(false)}
+              defaultDate={selectedDate}
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </div>
