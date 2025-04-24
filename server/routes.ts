@@ -523,6 +523,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Username availability check
+  app.get("/api/check-username/:username", async (req, res) => {
+    try {
+      const { username } = req.params;
+      
+      if (!username || username.trim() === '') {
+        return res.status(400).json({ 
+          message: "아이디를 입력해주세요.",
+          exists: false 
+        });
+      }
+
+      const existingEmployee = await storage.getEmployeeByUsername(username);
+      res.json({ 
+        exists: !!existingEmployee,
+        message: existingEmployee ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다."
+      });
+    } catch (err) {
+      console.error("Username check error:", err);
+      res.status(500).json({ 
+        message: "아이디 중복 확인 중 오류가 발생했습니다. 다시 시도해주세요.",
+        exists: false
+      });
+    }
+  });
+
   // Registration request routes
   app.post("/api/register", async (req, res) => {
     try {

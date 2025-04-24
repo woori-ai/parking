@@ -1,0 +1,45 @@
+# Docker 컨테이너 재시작 가이드
+
+## 1. 기본 재시작 방법
+```bash
+docker compose down && docker compose up -d
+```
+- `docker compose down`: 모든 컨테이너, 네트워크 중지 및 제거
+- `docker compose up -d`: 컨테이너를 백그라운드에서 새로 시작
+
+## 2. 컨테이너 상태 확인
+```bash
+docker ps
+```
+- 실행 중인 컨테이너 목록 확인
+- 포트 매핑 확인
+- 컨테이너 상태 및 실행 시간 확인
+
+## 3. 로그 확인 방법
+```bash
+# 전체 로그 확인
+docker compose logs
+
+# 특정 서비스 로그 확인
+docker compose logs app
+docker compose logs postgres
+```
+
+## 4. 개별 컨테이너 재시작
+```bash
+# 애플리케이션 서버만 재시작
+docker compose restart app
+
+# 데이터베이스만 재시작
+docker compose restart postgres
+```
+
+## 5. 주의사항
+1. 데이터베이스 컨테이너 재시작 시 데이터는 보존됨
+2. 컨테이너 재시작 전 저장되지 않은 작업 확인
+3. 포트 충돌 발생 시 이전 컨테이너 정리 필요
+
+## 6. 문제 해결
+- 포트 충돌 시: `docker ps -a` 로 모든 컨테이너 확인 후 중복 컨테이너 제거
+- 네트워크 문제 시: `docker network prune` 으로 미사용 네트워크 정리
+- 컨테이너 강제 종료 필요 시: `docker compose down --remove-orphans` 

@@ -9,8 +9,8 @@ const sequelize = new Sequelize('postgresql://postgres:postgres@postgres:5432/pa
 
 async function initDatabase() {
   try {
-    // 데이터베이스 테이블 생성 (force: true는 기존 테이블을 삭제하고 다시 생성)
-    console.log('데이터베이스 테이블 생성 중...');
+    // 데이터베이스 테이블 생성 (force: false는 기존 테이블을 유지하고 없는 경우만 생성)
+    console.log('데이터베이스 테이블 연결 확인 중...');
     await sequelize.authenticate();
     console.log('PostgreSQL 연결 성공!');
     
@@ -436,33 +436,42 @@ async function initDatabase() {
       underscored: true,
     });
     
-    // 테이블 동기화
-    await sequelize.sync({ force: true });
+    // 테이블 동기화 - force: false로 설정하여 기존 데이터 유지
+    await sequelize.sync({ force: false });
     
-    // 관리자 계정 생성
-    console.log('관리자 계정 생성 중...');
-    const hashedPassword = await bcrypt.hash('1234', 10);
+    // 관리자 계정 확인 및 생성
+    const adminCount = await Employee.count();
     
-    // 관리자 계정을 Employee 테이블에 생성 (isAdmin = true)
-    await Employee.create({
-      username: 'admin',
-      password: hashedPassword,
-      email: 'admin@parkingmanagement.com', 
-      phone: '010-1234-5678',
-      carNumber: 'ADMIN-001',
-      position: '관리자',
-      isAdmin: true
-    });
+    // 관리자 계정이 없는 경우에만 기본 계정 생성
+    if (adminCount === 0) {
+      console.log('관리자 계정 생성 중...');
+      
+      // 비밀번호 해시 생성
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('1234', salt);
+      
+      // 관리자 계정 생성
+      await Employee.create({
+        username: 'admin',
+        password: hashedPassword,
+        email: 'admin@parkingmanagement.com',
+        phone: '010-1234-5678',
+        carNumber: 'ADMIN-001',
+        position: '관리자',
+        isAdmin: true,
+      });
+      
+      console.log('관리자 계정이 Employee 테이블에 생성되었습니다.');
+      console.log('- 아이디: admin');
+      console.log('- 비밀번호: 1234');
+    } else {
+      console.log('기존 계정이 유지됩니다. 데이터베이스 초기화를 건너뜁니다.');
+    }
     
     console.log('데이터베이스 초기화 완료!');
-    console.log('관리자 계정이 Employee 테이블에 생성되었습니다.');
-    console.log('- 아이디: admin');
-    console.log('- 비밀번호: 1234');
-    
     await sequelize.close();
-    process.exit(0);
   } catch (error) {
-    console.error('데이터베이스 초기화 중 오류 발생:', error);
+    console.error('데이터베이스 초기화 오류:', error);
     process.exit(1);
   }
 }

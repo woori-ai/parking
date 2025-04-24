@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { apiRequest } from "@/lib/queryClient";
+import { useState } from "react";
 
 const registrationFormSchema = z.object({
   username: z.string().min(1, "아이디를 입력해주세요"),
@@ -28,6 +29,9 @@ interface RegistrationFormProps {
 export const RegistrationForm = ({ onSuccess, onCancel }: RegistrationFormProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [isUsernameChecked, setIsUsernameChecked] = useState(false);
+  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+  const [usernameMessage, setUsernameMessage] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationFormSchema),
@@ -38,6 +42,34 @@ export const RegistrationForm = ({ onSuccess, onCancel }: RegistrationFormProps)
       phone: "",
       carNumber: "",
       position: "",
+    },
+  });
+
+  const checkUsernameMutation = useMutation({
+    mutationFn: async (username: string) => {
+      console.log('Checking username:', username);
+      const response = await apiRequest('GET', `/api/check-username/${username}`);
+      console.log('Server response:', response);
+      return response;
+    },
+    onSuccess: (data) => {
+      console.log('Mutation success:', data);
+      setUsernameMessage({ 
+        type: data.exists ? 'error' : 'success', 
+        message: data.message || (data.exists ? '이미 사용 중인 아이디입니다.' : '사용 가능한 아이디입니다.')
+      });
+      setIsUsernameChecked(!data.exists);
+      setIsCheckingUsername(false);
+    },
+    onError: (error: any) => {
+      console.error('Mutation error:', error);
+      const errorMessage = error?.response?.data?.message || '아이디 중복 확인 중 오류가 발생했습니다.';
+      setUsernameMessage({ 
+        type: 'error', 
+        message: errorMessage 
+      });
+      setIsCheckingUsername(false);
+      setIsUsernameChecked(false);
     },
   });
 
@@ -65,8 +97,38 @@ export const RegistrationForm = ({ onSuccess, onCancel }: RegistrationFormProps)
     },
   });
 
+  const handleCheckUsername = async () => {
+    const username = form.getValues("username");
+    if (!username) {
+      setUsernameMessage({ 
+        type: 'error', 
+        message: '아이디를 입력해주세요.' 
+      });
+      return;
+    }
+    console.log('Initiating username check for:', username);
+    setIsCheckingUsername(true);
+    setUsernameMessage({ type: null, message: '' });
+    checkUsernameMutation.mutate(username);
+  };
+
   const onSubmit = (data: RegistrationFormValues) => {
+    if (!isUsernameChecked) {
+      toast({
+        variant: "destructive",
+        title: "아이디 중복 확인",
+        description: "아이디 중복 확인을 해주세요.",
+      });
+      return;
+    }
     registerMutation.mutate(data);
+  };
+
+  // username이 변경되면 중복확인 상태 초기화
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue("username", e.target.value);
+    setIsUsernameChecked(false);
+    setUsernameMessage({ type: null, message: '' });
   };
 
   return (
@@ -86,9 +148,26 @@ export const RegistrationForm = ({ onSuccess, onCancel }: RegistrationFormProps)
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>아이디</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+                  <div className="flex gap-2">
+                    <FormControl>
+                      <Input {...field} onChange={handleUsernameChange} />
+                    </FormControl>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={handleCheckUsername}
+                      disabled={isCheckingUsername}
+                    >
+                      {isCheckingUsername ? "확인 중..." : "중복 확인"}
+                    </Button>
+                  </div>
+                  {usernameMessage.type && (
+                    <p className={`text-sm mt-1 ${
+                      usernameMessage.type === 'success' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {usernameMessage.message}
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}

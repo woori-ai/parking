@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Search, Edit, Trash, Plus } from "lucide-react";
+import { Search, Edit, Trash, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { Employee, FormMode } from "@/types";
 import EmployeeForm from "@/components/employee/EmployeeForm";
@@ -19,6 +19,7 @@ const EmployeeManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
 
   // Fetch employees
   const { 
@@ -168,6 +169,14 @@ const EmployeeManagement = () => {
       employee.position.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Handle toggling expanded row
+  const handleToggleRow = (id: number) => {
+    setExpandedRows(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -217,8 +226,9 @@ const EmployeeManagement = () => {
               검색 결과가 없습니다.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="space-y-4">
+              {/* Table for Desktop */}
+              <Table className="hidden md:table">
                 <TableHeader>
                   <TableRow>
                     <TableHead>아이디</TableHead>
@@ -271,6 +281,68 @@ const EmployeeManagement = () => {
                   ))}
                 </TableBody>
               </Table>
+
+              {/* List for Mobile */}
+              <div className="md:hidden space-y-4">
+                {filteredEmployees?.map((employee) => (
+                  <Card key={employee.id} className="overflow-hidden">
+                    <CardContent className="p-4 space-y-2 cursor-pointer" onClick={() => handleToggleRow(employee.id)}>
+                      <div className="flex justify-between items-center">
+                        <div className="font-medium">{employee.username}</div>
+                        <div className="text-sm text-gray-500">{employee.email}</div>
+                        <Button variant="ghost" size="sm" className="ml-auto">
+                          {expandedRows[employee.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                      {expandedRows[employee.id] && (
+                        <div className="border-t pt-3 mt-3 space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="font-semibold">연락처:</span>
+                            <span>{employee.phone}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="font-semibold">차량번호:</span>
+                            <span>{employee.carNumber}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="font-semibold">직책:</span>
+                            <span>{employee.position}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm pt-2">
+                            <span className="font-semibold">관리자 권한:</span>
+                            <div className="flex items-center space-x-2">
+                              <Switch
+                                checked={employee.isAdmin === true}
+                                onCheckedChange={() => handleToggleAdmin(employee)}
+                                disabled={employee.username === "admin" || employee.username === "superadmin"}
+                                size="sm"
+                              />
+                              <span>{employee.isAdmin ? '관리자' : '일반 사용자'}</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-end space-x-2 pt-3">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => { e.stopPropagation(); handleEdit(employee); }}
+                            >
+                              <Edit className="h-4 w-4 mr-1" /> 수정
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={(e) => { e.stopPropagation(); handleDelete(employee.id); }}
+                              disabled={employee.username === "admin" || employee.username === "superadmin"}
+                            >
+                              <Trash className="h-4 w-4 mr-1" /> 삭제
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
           )}
         </CardContent>
