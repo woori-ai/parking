@@ -1,11 +1,14 @@
 import { Sequelize } from 'sequelize';
 
-// DATABASE_URL 환경 변수에서 연결 문자열 가져오기
+console.log('>>> Attempting to read DATABASE_URL...');
 const databaseUrl = process.env.DATABASE_URL;
+console.log('>>> Read DATABASE_URL value:', databaseUrl);
+
 if (!databaseUrl) {
+  console.error('>>> ERROR: DATABASE_URL is missing or empty!');
   throw new Error('DATABASE_URL 환경 변수가 설정되지 않았습니다. Railway 환경 변수를 확인하세요.');
 }
-console.log('>>> Using DATABASE_URL:', databaseUrl);
+console.log('>>> DATABASE_URL seems valid, creating Sequelize instance...');
 
 // Sequelize 인스턴스 생성
 const sequelize = new Sequelize(databaseUrl, {
@@ -22,6 +25,8 @@ const sequelize = new Sequelize(databaseUrl, {
     underscored: true
   }
 });
+
+console.log('>>> Sequelize instance created successfully.');
 
 // 연결 테스트 함수
 export const testConnection = async () => {
