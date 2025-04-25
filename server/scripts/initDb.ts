@@ -480,4 +480,4 @@ async function initDatabase() {
   }
 }
 
-initDatabase();
+// initDatabase(); // <-- 이 줄을 주석 처리하거나 삭제합니다.
