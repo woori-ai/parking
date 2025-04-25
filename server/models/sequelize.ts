@@ -1,8 +1,4 @@
 import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
-
-// 환경 변수 로드
-dotenv.config();
 
 // DATABASE_URL 환경 변수에서 연결 문자열 가져오기
 const databaseUrl = process.env.DATABASE_URL;
