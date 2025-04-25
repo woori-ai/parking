@@ -1,8 +1,12 @@
 import bcrypt from 'bcrypt';
 import { Sequelize, DataTypes } from 'sequelize';
 
-// Docker 네트워크 내에서는 postgres를 서비스 이름으로 사용
-const sequelize = new Sequelize('postgresql://postgres:postgres@postgres:5432/parking_management', {
+// DATABASE_URL 환경 변수 사용
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL 환경 변수가 설정되지 않았습니다.');
+}
+const sequelize = new Sequelize(databaseUrl, {
   dialect: 'postgres',
   logging: console.log
 });
