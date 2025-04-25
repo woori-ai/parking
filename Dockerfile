@@ -17,5 +17,5 @@ COPY . .
 # 포트 노출
 EXPOSE 5000
 
-# 애플리케이션 실행
-CMD ["npm", "run", "dev"] 
+# 빌드된 애플리케이션 실행
+CMD ["npm", "run", "start"] 
