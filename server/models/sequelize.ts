@@ -5,6 +5,7 @@ const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
   throw new Error('DATABASE_URL 환경 변수가 설정되지 않았습니다. Railway 환경 변수를 확인하세요.');
 }
+console.log('>>> Using DATABASE_URL:', databaseUrl);
 
 // Sequelize 인스턴스 생성
 const sequelize = new Sequelize(databaseUrl, {
