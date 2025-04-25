@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 5000
 
 # 데이터베이스 연결 확인 후 애플리케이션 실행 (초기화 스크립트 제외)
-CMD /bin/bash -c 'until node -e "const { Sequelize } = require('\''sequelize'\''); const sequelize = new Sequelize('\''postgresql://postgres:postgres@postgres:5432/parking_management'\'', { dialect: '\''postgres'\'' }); sequelize.authenticate().then(() => { console.log('\''데이터베이스 연결 성공'\''); process.exit(0); }).catch(err => { console.error('\''데이터베이스 연결 실패:'\'' ,err); process.exit(1); });"; do echo "데이터베이스 연결 대기 중..."; sleep 2; done && npm run dev' 
+CMD /bin/bash -c 'until node -e "const { Sequelize } = require(\\'sequelize\\'); const sequelize = new Sequelize(process.env.DATABASE_URL, { dialect: \\'postgres\\' }); sequelize.authenticate().then(() => { console.log(\\'데이터베이스 연결 성공\\'); process.exit(0); }).catch(err => { console.error(\\'데이터베이스 연결 실패:\\' ,err); process.exit(1); });"; do echo "데이터베이스 연결 대기 중..."; sleep 2; done && npm run dev' 
