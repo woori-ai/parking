@@ -1,4 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
+
+// DATABASE_URL 로그 출력 추가 (가장 먼저)
+console.log('>>> [index.ts] Reading DATABASE_URL:', process.env.DATABASE_URL);
+
 import { registerRoutes, router } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import cors from 'cors';
