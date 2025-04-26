@@ -1,16 +1,3 @@
-// server/index.ts (Temporary modification for debugging)
-console.log('>>> [index.ts START] Attempting to read environment variables...');
-console.log('>>> [index.ts] PGDATABASE:', process.env.PGDATABASE);
-console.log('>>> [index.ts] PGUSER:', process.env.PGUSER);
-console.log('>>> [index.ts] PGHOST:', process.env.PGHOST);
-console.log('>>> [index.ts] PGPASSWORD:', process.env.PGPASSWORD ? '******' : 'undefined'); // 비밀번호 값은 숨김
-console.log('>>> [index.ts] PGPORT:', process.env.PGPORT);
-console.log('>>> [index.ts] DATABASE_URL:', process.env.DATABASE_URL); // 혹시 모르니 DATABASE_URL도 출력
-console.log('>>> [index.ts END] Exiting process.');
-process.exit(0); // 로그 출력 후 즉시 종료
-
-/* 
-// 원래 코드는 잠시 주석 처리
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes, router } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -86,4 +73,3 @@ app.use('/api', router);
     log(`serving on port ${port}`);
   });
 })();
-*/
