@@ -1,7 +1,11 @@
 import { Sequelize } from 'sequelize';
 
 // 개별 환경 변수 사용
-console.log('>>> Reading PGDATABASE:', process.env.PGDATABASE);
+console.log('PGUSER:', process.env.PGUSER);
+console.log('PGPASSWORD:', process.env.PGPASSWORD);
+console.log('PGHOST:', process.env.PGHOST);
+console.log('PGPORT:', process.env.PGPORT);
+console.log('PGDATABASE:', process.env.PGDATABASE);
 const dbName = process.env.PGDATABASE;
 console.log('>>> Reading PGUSER:', process.env.PGUSER);
 const dbUser = process.env.PGUSER;
