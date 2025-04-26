@@ -21,4 +21,4 @@ RUN npm run build
 EXPOSE 5000
 
 # 빌드된 애플리케이션 실행
-CMD ["npm", "run", "start"] 
+CMD ["node", "-e", "console.log('PGUSER:', process.env.PGUSER); console.log('PGPASSWORD:', process.env.PGPASSWORD); console.log('PGHOST:', process.env.PGHOST); console.log('PGPORT:', process.env.PGPORT); console.log('PGDATABASE:', process.env.PGDATABASE); setTimeout(() => {}, 60000);"] 
